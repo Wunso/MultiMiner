@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Mining Buddy">
+    <output-path>$USER_HOME$/DreamBot/Scripts</output-path>
+    <root id="archive" name="Mining Buddy.jar">
+      <element id="module-output" name="Mining Buddy" />
+    </root>
+  </artifact>
+</component>
