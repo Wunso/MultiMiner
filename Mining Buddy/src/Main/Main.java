@@ -90,21 +90,19 @@ public class Main extends AbstractScript {
             if (!getInventory().isFull()) {
                 if (selectedLocation == "Varrock West") {
                     if (VarrockWestMineArea.contains(getLocalPlayer())) {
-                        if (selectedOre == "Tin") {
-                            log("Starting to mine tin in Varrock west mining area");
-                            mineOre(TIN_IDS, IDS_MINED);
-                        }
-                        if (selectedOre == "Iron") {
-                            log("Starting to mine iron in Varrock west mining area");
-                            mineOre(IRON_IDS, IDS_MINED);
-                        }
-                        if (selectedOre == "Clay") {
-                            log("Starting to mine clay in Varrock west mining area");
-                            mineOre(CLAY_IDS, IDS_MINED);
-                        }
-                        if (selectedOre == "Silver") {
-                            log("Starting to mine silver in Varrock west mining area");
-                            mineOre(SILVER_IDS, IDS_MINED);
+                        switch (selectedOre) {
+                            case "Tin":
+                                mineOre(TIN_IDS, IDS_MINED);
+                                break;
+                            case "Iron":
+                                mineOre(IRON_IDS, IDS_MINED);
+                                break;
+                            case "Clay":
+                                mineOre(CLAY_IDS, IDS_MINED);
+                                break;
+                            case "Silver":
+                                mineOre(SILVER_IDS, IDS_MINED);
+                                break;
                         }
                     } else {
                         log("Running to mining area");
@@ -116,25 +114,19 @@ public class Main extends AbstractScript {
                 if (selectedLocation == "Varrock East") {
                     if (VarrockEastMineArea.contains(getLocalPlayer())) {
                         log(selectedOre);
-                        if (selectedOre == "Tin") {
-                            log(selectedOre);
-                            log("Starting to mine tin in Varrock east mining area");
-                            mineOre(TIN_IDS, IDS_MINED);
-                        }
-                        if (selectedOre == "Copper") {
-                            log(selectedOre);
-                            log("Starting to mine copper in Varrock east mining area");
-                            mineOre(COPPER_IDS, IDS_MINED);
-                        }
-                        if (selectedOre == "Tin & Copper") {
-                            log(selectedOre);
-                            log("Starting to mine tin & copper in Varrock east mining area");
-                            mineOre(TIN_COPPER_IDS, IDS_MINED);
-                        }
-                        if (selectedOre == "Iron") {
-                            log(selectedOre);
-                            log("Starting to mine iron in Varrock east mining area");
-                            mineOre(IRON_IDS, IDS_MINED);
+                        switch (selectedOre) {
+                            case "Tin":
+                                mineOre(TIN_IDS, IDS_MINED);
+                                break;
+                            case "Copper":
+                                mineOre(COPPER_IDS, IDS_MINED);
+                                break;
+                            case "Tin & Copper":
+                                mineOre(TIN_COPPER_IDS, IDS_MINED);
+                                break;
+                            case "Iron":
+                                mineOre(IRON_IDS, IDS_MINED);
+                                break;
                         }
                     } else {
                         log("Running to mining area");
@@ -158,21 +150,19 @@ public class Main extends AbstractScript {
                                         sleep(Calculations.random(1000, 2500));
                                     }
                                 } else {
-                                    if (selectedOre == "Tin") {
-                                        log("Starting to mine tin in Varrock west mining area");
-                                        mineOre(TIN_IDS, IDS_MINED);
-                                    }
-                                    if (selectedOre == "Iron") {
-                                        log("Starting to mine iron in Varrock west mining area");
-                                        mineOre(IRON_IDS, IDS_MINED);
-                                    }
-                                    if (selectedOre == "Clay") {
-                                        log("Starting to mine clay in Varrock west mining area");
-                                        mineOre(CLAY_IDS, IDS_MINED);
-                                    }
-                                    if (selectedOre == "Silver") {
-                                        log("Starting to mine silver in Varrock west mining area");
-                                        mineOre(SILVER_IDS, IDS_MINED);
+                                    switch (selectedOre)  {
+                                        case "Tin":
+                                            mineOre(TIN_IDS, IDS_MINED);
+                                            break;
+                                        case "Iron":
+                                            mineOre(IRON_IDS, IDS_MINED);
+                                            break;
+                                        case "Clay":
+                                            mineOre(CLAY_IDS, IDS_MINED);
+                                            break;
+                                        case "Silver":
+                                            mineOre(SILVER_IDS, IDS_MINED);
+                                            break;
                                     }
                                     hasNoticedFullInventory = true;
                                 }
@@ -195,21 +185,19 @@ public class Main extends AbstractScript {
                                      }
                                  } else {
                                      log(selectedOre);
-                                     if (selectedOre == "Tin") {
-                                         log("Starting to mine tin in Varrock east mining area");
-                                         mineOre(TIN_IDS, IDS_MINED);
-                                     }
-                                     if (selectedOre == "Copper") {
-                                         log("Starting to mine copper in Varrock east mining area");
-                                         mineOre(COPPER_IDS, IDS_MINED);
-                                     }
-                                     if (selectedOre == "Tin & Copper") {
-                                         log("Starting to mine tin & copper in Varrock east mining area");
-                                         mineOre(TIN_COPPER_IDS, IDS_MINED);
-                                     }
-                                     if (selectedOre == "Iron") {
-                                         log("Starting to mine iron in Varrock east mining area");
-                                         mineOre(IRON_IDS, IDS_MINED);
+                                     switch(selectedOre) {
+                                         case "Tin":
+                                             mineOre(TIN_IDS, IDS_MINED);
+                                             break;
+                                         case "Copper":
+                                             mineOre(COPPER_IDS, IDS_MINED);
+                                             break;
+                                         case "Tin & Copper":
+                                             mineOre(TIN_COPPER_IDS, IDS_MINED);
+                                             break;
+                                         case "Iron":
+                                             mineOre(IRON_IDS, IDS_MINED);
+                                             break;
                                      }
                                      hasNoticedFullInventory = true;
                                  }
