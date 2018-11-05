@@ -20,7 +20,13 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
 
-public class MiningBot extends AbstractScript {
+public class MiningBot {
+    AbstractScript s;
+
+    public MiningBot (AbstractScript ctx) {
+        this.s = ctx;
+    }
+
     // Instantiate
     Main main = new Main();
 
@@ -82,25 +88,23 @@ public class MiningBot extends AbstractScript {
     private long timeBegan;
     private long timeRan;
 
-    @Override
     public void onStart() {
         timeBegan = System.currentTimeMillis();
         selectedOreMined = 0;
     }
 
-    @Override
     public int onLoop() {
         if (Integer.valueOf(calculatedOreAmount[0]) == selectedOreMined) {
-            getTabs().open(Tab.LOGOUT);
-            sleep(Calculations.random(1000, 2000));
-            WidgetChild Logout = getWidgets().getChildWidget(182, 7);
+            s.getTabs().open(Tab.LOGOUT);
+            s.sleep(Calculations.random(1000, 2000));
+            WidgetChild Logout = s.getWidgets().getChildWidget(182, 7);
             Logout.interact("Logout");
-            stop();
+            s.stop();
         } else {
-            if (!getInventory().isFull()) {
+            if (!s.getInventory().isFull()) {
                 if (selectedLocation == "Varrock West") {
                     // Check if player is in the mining area, else run to it.
-                    if (VarrockWestMineArea.contains(getLocalPlayer())) {
+                    if (VarrockWestMineArea.contains(s.getLocalPlayer())) {
                         switch (selectedOre) {
                             case "Tin":
                                 mineOre(TIN_IDS, IDS_MINED);
@@ -116,15 +120,15 @@ public class MiningBot extends AbstractScript {
                                 break;
                         }
                     } else {
-                        log("Running to mining area");
-                        if (getWalking().walk(VarrockWestMineArea.getRandomTile())) {
-                            sleep(Calculations.random(1000, 2500));
+                        s.log("Running to mining area");
+                        if (s.getWalking().walk(VarrockWestMineArea.getRandomTile())) {
+                            s.sleep(Calculations.random(1000, 2500));
                         }
                     }
                 }
                 if (selectedLocation == "Varrock East") {
-                    if (VarrockEastMineArea.contains(getLocalPlayer())) {
-                        log(selectedOre);
+                    if (VarrockEastMineArea.contains(s.getLocalPlayer())) {
+                        s.log(selectedOre);
                         switch (selectedOre) {
                             case "Tin":
                                 mineOre(TIN_IDS, IDS_MINED);
@@ -140,25 +144,25 @@ public class MiningBot extends AbstractScript {
                                 break;
                         }
                     } else {
-                        log("Running to mining area");
-                        if (getWalking().walk(VarrockEastMineArea.getRandomTile())) {
-                            sleep(Calculations.random(1000, 2500));
+                        s.log("Running to mining area");
+                        if (s.getWalking().walk(VarrockEastMineArea.getRandomTile())) {
+                            s.sleep(Calculations.random(1000, 2500));
                         }
                     }
                 }
             }
             // Go bank if inventory is full & not powermining
-            if (getInventory().isFull()) {
+            if (s.getInventory().isFull()) {
                 if (!isPowermining) { // Check for powermining
                     if (selectedLocation == "Varrock West") {
-                        if (VarrockWestBankArea.contains(getLocalPlayer())) {
+                        if (VarrockWestBankArea.contains(s.getLocalPlayer())) {
                             bank();
                         } else {
                             randomizeCounter = Calculations.random(0, 3);
                             if (randomizeCounter == Calculations.random(0, 3)) {
                                 if (hasNoticedFullInventory == true) {
-                                    if (getWalking().walk(VarrockWestBankArea.getCenter())) {
-                                        sleep(Calculations.random(1000, 2500));
+                                    if (s.getWalking().walk(VarrockWestBankArea.getCenter())) {
+                                        s.sleep(Calculations.random(1000, 2500));
                                     }
                                 } else {
                                     switch (selectedOre)  {
@@ -178,24 +182,24 @@ public class MiningBot extends AbstractScript {
                                     hasNoticedFullInventory = true;
                                 }
                             } else {
-                                if (getWalking().walk(VarrockWestBankArea.getCenter())) {
-                                    sleep(Calculations.random(1000, 2500));
+                                if (s.getWalking().walk(VarrockWestBankArea.getCenter())) {
+                                    s.sleep(Calculations.random(1000, 2500));
                                 }
                             }
                         }
                     }
                     if (selectedLocation == "Varrock East") {
-                        if (VarrockEastBankArea.contains(getLocalPlayer())) {
+                        if (VarrockEastBankArea.contains(s.getLocalPlayer())) {
                             bank();
                         } else {
                             randomizeCounter = Calculations.random(0, 3);
                             if (randomizeCounter == Calculations.random(0, 3)) {
                                 if (hasNoticedFullInventory == true) {
-                                    if (getWalking().walk(VarrockEastBankArea.getCenter())) {
-                                        sleep(Calculations.random(1000, 2500));
+                                    if (s.getWalking().walk(VarrockEastBankArea.getCenter())) {
+                                        s.sleep(Calculations.random(1000, 2500));
                                     }
                                 } else {
-                                    log(selectedOre);
+                                    s.log(selectedOre);
                                     switch(selectedOre) {
                                         case "Tin":
                                             mineOre(TIN_IDS, IDS_MINED);
@@ -213,15 +217,15 @@ public class MiningBot extends AbstractScript {
                                     hasNoticedFullInventory = true;
                                 }
                             } else {
-                                if (getWalking().walk(VarrockEastBankArea.getCenter())) {
-                                    sleep(Calculations.random(1000, 2500));
+                                if (s.getWalking().walk(VarrockEastBankArea.getCenter())) {
+                                    s.sleep(Calculations.random(1000, 2500));
                                 }
                             }
                         }
                     }
                 } else {
                     // Drop everything in inventory if inventory is full
-                    getInventory().dropAll();
+                    s.getInventory().dropAll();
                 }
             }
 
@@ -229,17 +233,17 @@ public class MiningBot extends AbstractScript {
             // Move the camera and mouse randomly
             randomizeCounter = Calculations.random(0, 8);
             if (randomizeCounter == Calculations.random(0, 8)) {
-                log("Random camera rotation");
-                getCamera().rotateTo(Calculations.random(2400), Calculations.random(getClient().getLowestPitch(), 384));
-                sleep(Calculations.random(430,780));
+                s.log("Random camera rotation");
+                s.getCamera().rotateTo(Calculations.random(2400), Calculations.random(s.getClient().getLowestPitch(), 384));
+                s.sleep(Calculations.random(430,780));
             }
             randomizeCounter = Calculations.random(0, 6);
             if (randomizeCounter == Calculations.random(0, 6)) {
-                if (!getLocalPlayer().isMoving()) {
+                if (!s.getLocalPlayer().isMoving()) {
                     // Random cursor movements
-                    log("Random mouse movement");
-                    sleep(Calculations.random(648, 946));
-                    getMouse().move(getClient().getViewportTools().getRandomPointOnCanvas());
+                    s.log("Random mouse movement");
+                    s.sleep(Calculations.random(648, 946));
+                    s.getMouse().move(s.getClient().getViewportTools().getRandomPointOnCanvas());
                 }
             }
         }
@@ -248,66 +252,66 @@ public class MiningBot extends AbstractScript {
 
     private void mineOre(int[] VEIN_ID, int[] VEIN_ID_MINED) {
         // Mining Ore
-        GameObject OreVein = getGameObjects().closest(gameObject -> gameObject != null && gameObject.getName().equals("Rocks") && (gameObject.getID() == VEIN_ID[0] || gameObject.getID() == VEIN_ID[1] || gameObject.getID() == VEIN_ID[2] || gameObject.getID() == VEIN_ID[3]));
-        GameObject NextOreVein = getGameObjects().closest(gameObject -> gameObject != null && gameObject.getName().equals("Rocks") && (gameObject.getID() == VEIN_ID[0] || gameObject.getID() == VEIN_ID[1] || gameObject.getID() == VEIN_ID[2] || gameObject.getID() == VEIN_ID[3]) && OreVein.getTile() != gameObject.getTile());
-        if (getLocalPlayer().getAnimation() == 625) {
+        GameObject OreVein = s.getGameObjects().closest(gameObject -> gameObject != null && gameObject.getName().equals("Rocks") && (gameObject.getID() == VEIN_ID[0] || gameObject.getID() == VEIN_ID[1] || gameObject.getID() == VEIN_ID[2] || gameObject.getID() == VEIN_ID[3]));
+        GameObject NextOreVein = s.getGameObjects().closest(gameObject -> gameObject != null && gameObject.getName().equals("Rocks") && (gameObject.getID() == VEIN_ID[0] || gameObject.getID() == VEIN_ID[1] || gameObject.getID() == VEIN_ID[2] || gameObject.getID() == VEIN_ID[3]) && OreVein.getTile() != gameObject.getTile());
+        if (s.getLocalPlayer().getAnimation() == 625) {
             randomizeCounter = Calculations.random(0, 5);
             if (randomizeCounter == Calculations.random(0, 5)) {
-                log("Random mouse movement");
-                sleep(Calculations.random(250, 648));
-                getMouse().move(getClient().getViewportTools().getRandomPointOnCanvas());
+                s.log("Random mouse movement");
+                s. sleep(Calculations.random(250, 648));
+                s.getMouse().move(s.getClient().getViewportTools().getRandomPointOnCanvas());
             }
-            if (sleepUntil(() -> (OreVein.getID() == VEIN_ID_MINED[0] || OreVein.getID() == VEIN_ID_MINED[1]), Calculations.random(1000, 2000))) {
+            if (s.sleepUntil(() -> (OreVein.getID() == VEIN_ID_MINED[0] || OreVein.getID() == VEIN_ID_MINED[1]), Calculations.random(1000, 2000))) {
                 if(NextOreVein != null && NextOreVein.isOnScreen()) {
                     if (NextOreVein.getClickablePoint() != null) {
                         if (NextOreVein.interact("Mine")) {
-                            int Ores = getInventory().count(selectedOre);
-                            log("Ores 2: " + Ores);
-                            sleepUntil(() -> getInventory().count(selectedOre) > Ores || (NextOreVein.getID() == VEIN_ID_MINED[0] || NextOreVein.getID() == VEIN_ID_MINED[1]), Calculations.random(10000, 12000));
-                            log("Ores 2 updated: " + getInventory().count(selectedOre));
+                            int Ores = s.getInventory().count(selectedOre);
+                            s.log("Ores 2: " + Ores);
+                            s.sleepUntil(() -> s.getInventory().count(selectedOre) > Ores || (NextOreVein.getID() == VEIN_ID_MINED[0] || NextOreVein.getID() == VEIN_ID_MINED[1]), Calculations.random(10000, 12000));
+                            s.log("Ores 2 updated: " + s.getInventory().count(selectedOre));
                         }
                     } else {
-                        getCamera().mouseRotateTo(Calculations.random(0,2048),Calculations.random(0,2048));
+                        s.getCamera().mouseRotateTo(Calculations.random(0,2048),Calculations.random(0,2048));
                     }
                 }
             }
         }
-        if ((OreVein.getID() == VEIN_ID[0] || OreVein.getID() == VEIN_ID[1] || OreVein.getID() == VEIN_ID[2] || OreVein.getID() == VEIN_ID[3]) && getLocalPlayer().getAnimation() == -1) {
+        if ((OreVein.getID() == VEIN_ID[0] || OreVein.getID() == VEIN_ID[1] || OreVein.getID() == VEIN_ID[2] || OreVein.getID() == VEIN_ID[3]) && s.getLocalPlayer().getAnimation() == -1) {
             if (OreVein.isOnScreen()) {
                 if (OreVein.getClickablePoint() != null) {
                     if (OreVein.interact("Mine")) {
                         randomizeCounter = Calculations.random(0, 2);
                         if (randomizeCounter == Calculations.random(0, 2)) {
-                            sleep(Calculations.random(625, 985));
-                            if (sleepUntil(() -> !getLocalPlayer().isMoving(), Calculations.random(4000, 6000))) {
-                                log("Selecting next vein");
-                                getMouse().move(NextOreVein.getTile());
-                                sleep(Calculations.random(625, 985));
+                            s.sleep(Calculations.random(625, 985));
+                            if (s.sleepUntil(() -> !s.getLocalPlayer().isMoving(), Calculations.random(4000, 6000))) {
+                                s. log("Selecting next vein");
+                                s.getMouse().move(NextOreVein.getTile());
+                                s.sleep(Calculations.random(625, 985));
                             }
                         }
-                        int Ores = getInventory().count(selectedOre);
-                        log("Ores 1: " + Ores);
-                        sleepUntil(() -> getInventory().count(selectedOre) > Ores || (OreVein.getID() == VEIN_ID_MINED[0] || OreVein.getID() == VEIN_ID_MINED[1]), Calculations.random(2000, 2500));
-                        log("Ores 1 updated: " + getInventory().count(selectedOre));
+                        int Ores = s.getInventory().count(selectedOre);
+                        s.log("Ores 1: " + Ores);
+                        s.sleepUntil(() -> s.getInventory().count(selectedOre) > Ores || (OreVein.getID() == VEIN_ID_MINED[0] || OreVein.getID() == VEIN_ID_MINED[1]), Calculations.random(2000, 2500));
+                        s.log("Ores 1 updated: " + s.getInventory().count(selectedOre));
                     }
                 } else {
-                    getCamera().mouseRotateTo(Calculations.random(0, 2048), Calculations.random(0, 2048));
+                    s.getCamera().mouseRotateTo(Calculations.random(0, 2048), Calculations.random(0, 2048));
                 }
             }
         }
     }
 
     private void bank() {
-        NPC banker = getNpcs().closest(npc -> npc != null && npc.hasAction("Bank"));
+        NPC banker = s.getNpcs().closest(npc -> npc != null && npc.hasAction("Bank"));
         if (banker.interact("Bank")) {
-            log("Interacted with banker");
-            if (sleepUntil(() -> getBank().isOpen(), Calculations.random(4000,7000))) {
-                sleep(Calculations.random(700, 950));
-                if (getBank().depositAllItems()) {
-                    log("Deposited all items");
-                    sleep(Calculations.random(700, 950));
-                    if (sleepUntil(() -> !getInventory().isFull(), Calculations.random(6000, 8000))) {
-                        sleep(Calculations.random(700, 950));
+            s.log("Interacted with banker");
+            if (s.sleepUntil(() -> s.getBank().isOpen(), Calculations.random(4000,7000))) {
+                s.sleep(Calculations.random(700, 950));
+                if (s.getBank().depositAllItems()) {
+                    s.log("Deposited all items");
+                    s.sleep(Calculations.random(700, 950));
+                    if (s.sleepUntil(() -> !s.getInventory().isFull(), Calculations.random(6000, 8000))) {
+                        s.sleep(Calculations.random(700, 950));
                     }
                 }
             }
@@ -336,7 +340,7 @@ public class MiningBot extends AbstractScript {
         JFrame miningFrame = new JFrame();
         miningFrame.setTitle("OSRS MultiMiner");
         miningFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        miningFrame.setLocationRelativeTo(getClient().getInstance().getCanvas());
+        miningFrame.setLocationRelativeTo(s.getClient().getInstance().getCanvas());
         miningFrame.setPreferredSize(new Dimension(400, 200));
         miningFrame.getContentPane().setLayout(new BorderLayout());
         miningFrame.pack();
@@ -358,7 +362,7 @@ public class MiningBot extends AbstractScript {
             public void actionPerformed(ActionEvent e) {
                 if (locationComboBox.getSelectedItem() == "Varrock West") {
                     oreComboBox.setModel(varrockWestOreModel);
-                    log("Setting varrock west combobox");
+                    s.log("Setting varrock west combobox");
                 } else if (locationComboBox.getSelectedItem() == "Varrock East") {
                     oreComboBox.setModel(varrockEastOreModel);
                 }
@@ -536,13 +540,12 @@ public class MiningBot extends AbstractScript {
         miningFrame.setVisible(true);
     }
 
-    @Override
     public void onPaint(Graphics g) {
-        super.onPaint(g);
+        s.onPaint(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        currentXp = getSkills().getExperience(Skill.MINING);
-        currentLevel = getSkills().getRealLevel(Skill.MINING);
+        currentXp = s.getSkills().getExperience(Skill.MINING);
+        currentLevel = s.getSkills().getRealLevel(Skill.MINING);
         currentLevelXp = XP_TABLE[currentLevel];
         nextLevelXp = XP_TABLE[currentLevel + 1];
         percentTNL = ((currentXp - currentLevelXp) / (nextLevelXp - currentLevelXp) * 100);
@@ -561,12 +564,12 @@ public class MiningBot extends AbstractScript {
         int borderThickness = 10;
 
         g2d.setColor(fadedGreen);
-        g2d.fillArc((getClient().getInstance().getCanvas().getWidth() - getClient().getInstance().getCanvas().getWidth() / 3) / 2, 0, progressRadius, progressRadius, 90, percentage);
+        g2d.fillArc((s.getClient().getInstance().getCanvas().getWidth() - s.getClient().getInstance().getCanvas().getWidth() / 3) / 2, 0, progressRadius, progressRadius, 90, percentage);
         g2d.setColor(fadedGray);
-        g2d.fillArc(((getClient().getInstance().getCanvas().getWidth() - getClient().getInstance().getCanvas().getWidth() / 3) / 2) + (borderThickness / 2), (borderThickness / 2), progressRadius - borderThickness, progressRadius - borderThickness, 90, 360);
+        g2d.fillArc(((s.getClient().getInstance().getCanvas().getWidth() - s.getClient().getInstance().getCanvas().getWidth() / 3) / 2) + (borderThickness / 2), (borderThickness / 2), progressRadius - borderThickness, progressRadius - borderThickness, 90, 360);
         String percentageString = df.format(percentTNL) + "%";
         g2d.setColor(Color.WHITE);
-        g2d.drawString(percentageString, ((getClient().getInstance().getCanvas().getWidth() - getClient().getInstance().getCanvas().getWidth() / 3) / 2) + 5, progressRadius / 2);
+        g2d.drawString(percentageString, ((s.getClient().getInstance().getCanvas().getWidth() - s.getClient().getInstance().getCanvas().getWidth() / 3) / 2) + 5, progressRadius / 2);
 
         // Draw progress bar
             /*g.setColor(Color.GREEN);
@@ -583,10 +586,10 @@ public class MiningBot extends AbstractScript {
         // Draw script runtime time
         g.setColor(Color.YELLOW);
         timeRan = System.currentTimeMillis() - this.timeBegan;
-        g.drawString(ft(timeRan), 5, ((getClient().getInstance().getCanvas().getHeight() / 3) * 2));
+        g.drawString(ft(timeRan), 5, ((s.getClient().getInstance().getCanvas().getHeight() / 3) * 2));
 
         // Draw ores mined
-        g.drawString("Total ores mined: " + selectedOreMined, 5, ((getClient().getInstance().getCanvas().getHeight() / 3) * 2) - 10);
+        g.drawString("Total ores mined: " + selectedOreMined, 5, ((s.getClient().getInstance().getCanvas().getHeight() / 3) * 2) - 10);
     }
 
     private String ft(long duration){

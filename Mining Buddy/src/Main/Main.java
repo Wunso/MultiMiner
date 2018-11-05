@@ -1,50 +1,103 @@
 package Main;
 
 import Quests.CooksAssistant;
+import Quests.RomeoJuliet;
+import Quests.WitchsPotion;
 import Skills.MiningBot;
+import TutorialIsland.TutorialIsland;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import javax.swing.*;
 import java.awt.*;
 
-@ScriptManifest(author = "ins1d3", category = Category.MINING, description = "It does some things.", name = "MultiScript", version = 1.0)
+@ScriptManifest(author = "ins1d3", category = Category.MINING, description = "It does some things.", name = "MultiScript", version = 1.1)
 public class Main extends AbstractScript {
+    // QUESTS
     // Cook's Assistant
-    CooksAssistant CooksAssistant = new CooksAssistant();
+    private CooksAssistant cooksAssistant;
 
+    // Witch's Potion
+    private WitchsPotion witchsPotion;
+
+    // Romeo & Juliet
+    private RomeoJuliet romeoJuliet;
+
+    // SKILL BOTS
     // MiningBot
-    MiningBot MiningBot = new MiningBot();
+    private MiningBot miningBot;
+
+    // Tutorial Island
+    private TutorialIsland tutorialIsland;
 
     // Keeps script selection
     private String selectedScript;
 
+    // VARS
+    // Skills
     public boolean minerIsRunning;
+
+    // Quests
     private boolean questerIsRunning;
     private boolean isCooksAssistant;
+    private boolean isWitchsPotion;
+    private boolean isRomeoJuliet;
+
+    // Tutorial island
+    private boolean isTutorialIsland;
 
     @Override
     public void onStart() {
+        log("Starting Script");
+
         getClient().disableIdleCamera();
         getClient().disableIdleMouse();
 
-        MiningBot.onStart();
-        CooksAssistant.onStart();
+        cooksAssistant = new CooksAssistant(this);
+        witchsPotion = new WitchsPotion(this);
+        romeoJuliet = new RomeoJuliet(this);
+
+        miningBot = new MiningBot(this);
+        tutorialIsland = new TutorialIsland(this);
+
+        // Quests
+        cooksAssistant.onStart();
+        witchsPotion.onStart();
+        romeoJuliet.onStart();
+
+        // Skills
+        miningBot.onStart();
+
+        // Tutorial island
+        tutorialIsland.onStart();
 
         createScriptSelection();
     }
 
     @Override
     public int onLoop() {
-
         // Does Cook's Assistant Quest
         if (isCooksAssistant && questerIsRunning) {
-            CooksAssistant.onLoop();
+            cooksAssistant.onLoop();
+        }
+
+        // Does Witch's Potion if Cook's Assistant is completed
+        if (isWitchsPotion && questerIsRunning && cooksAssistant.isCooksAssistantCompleted()) {
+            witchsPotion.onLoop();
+        }
+
+        // Does Romeo and Juliet if Cook's Assistant & Witch's Potion is completed
+        if (isWitchsPotion && questerIsRunning && cooksAssistant.isCooksAssistantCompleted() && witchsPotion.isWitchsPotionCompleted()) {
+            romeoJuliet.onLoop();
         }
 
         // Run if minerscript is launched
         if (minerIsRunning) {
-            MiningBot.onLoop();
+            miningBot.onLoop();
+        }
+
+        if (isTutorialIsland) {
+            tutorialIsland.onLoop();
         }
 
         return 600;
@@ -60,7 +113,7 @@ public class Main extends AbstractScript {
 
         // Run miner paint
         if (minerIsRunning) {
-            MiningBot.onPaint(g);
+            miningBot.onPaint(g);
         }
     }
 
@@ -68,7 +121,7 @@ public class Main extends AbstractScript {
     private void createScriptSelection() {
         // CREATE SELECTION FRAME
         JFrame selectionFrame = new JFrame();
-        selectionFrame.setTitle("Select your script");
+        selectionFrame.setTitle("Script selection");
         selectionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         selectionFrame.setLocationRelativeTo(getClient().getInstance().getCanvas());
         selectionFrame.setPreferredSize(new Dimension(400, 100));
@@ -80,8 +133,9 @@ public class Main extends AbstractScript {
         JPanel scriptPanel = new JPanel();
         scriptPanel.setLayout(new GridLayout(0, 2));
 
+        // Script selection screen
         final JComboBox scriptComboBox = new JComboBox<>(new String[]{
-                "Mining", "Questing"
+                "Mining", "Questing", "Tutorial Island"
         });
 
         // Select script label
@@ -92,7 +146,9 @@ public class Main extends AbstractScript {
         // Add script combo box
         scriptPanel.add(scriptComboBox);
 
+        // Add panel to the frame
         selectionFrame.getContentPane().add(scriptPanel, BorderLayout.CENTER);
+
         // Lower GUI
         JPanel selectionButtonPanel = new JPanel();
         selectionButtonPanel.setLayout(new FlowLayout());
@@ -102,12 +158,16 @@ public class Main extends AbstractScript {
         selectionButton.addActionListener(e -> {
             selectedScript = String.valueOf(scriptComboBox.getSelectedItem());
             if (selectedScript == "Mining") {
-                MiningBot.createMiningGUI();
+                miningBot.createMiningGUI();
             }
             if (selectedScript == "Questing") {
                 createQuestingGUI();
                 questerIsRunning = true;
 
+            }
+            if (selectedScript == "Tutorial Island") {
+                isTutorialIsland = true;
+                log("isTutorialIsland: " + isTutorialIsland);
             }
             selectionFrame.dispose();
         });
@@ -124,7 +184,7 @@ public class Main extends AbstractScript {
 
         // CREATE SELECTION FRAME
         JFrame questingFrame = new JFrame();
-        questingFrame.setTitle("Select your script");
+        questingFrame.setTitle("Quest selection");
         questingFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         questingFrame.setLocationRelativeTo(getClient().getInstance().getCanvas());
         questingFrame.setPreferredSize(new Dimension(400, 100));
@@ -138,7 +198,7 @@ public class Main extends AbstractScript {
 
         // Select quest label
         JLabel selectScript = new JLabel();
-        selectScript.setText("quest:");
+        selectScript.setText("Quest:");
         questingPanel.add(selectScript);
 
         // Add quest combo box
@@ -149,10 +209,12 @@ public class Main extends AbstractScript {
         JPanel selectionButtonPanel = new JPanel();
         selectionButtonPanel.setLayout(new FlowLayout());
 
+        // Create start button
         JButton selectionButton = new JButton();
         selectionButton.setText("Start");
         selectionButton.addActionListener(e -> {
             selectedScript = String.valueOf(questComboBox.getSelectedItem());
+            // Automatically get 7 QP with 3 quests
             if (selectedScript == "7 QP") {
                 doCooksAssistant();
                 doWitchsPotion();
@@ -170,10 +232,10 @@ public class Main extends AbstractScript {
     }
 
     private void doWitchsPotion() {
-
+        isWitchsPotion = true;
     }
 
     private void doRomeoAndJuliet() {
-
+        isRomeoJuliet = true;
     }
 }
