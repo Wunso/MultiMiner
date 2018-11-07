@@ -81,6 +81,8 @@ public class CooksAssistant {
                 }
             counter++;
         }
+        // Start running again if energy is atleast above 30
+        startRunning();
 
         switch(currentState) {
             case START_QUEST:
@@ -290,12 +292,24 @@ public class CooksAssistant {
             case RUN_MILL:
                 // Run to mill
                 if (s.getLocalPlayer().getTile().distance(new Tile(3166, 3305, 0)) > 5){
-                    s.getWalking().walk(new Tile(3166, 3305, 0));
+                    s.getWalking().walk(new Tile(3166, 3302, 0));
                     walkingSleep();
                 } else {
-                    currentState = State.ASCEND_LADDER;
-                    s.log("currentState: " + currentState);
-                    break;
+                    // Open large door if closed
+                    GameObject largeDoor = s.getGameObjects().closest("Large Door");
+                    if (largeDoor != null) {
+                        if (largeDoor.hasAction("Open")) {
+                            largeDoor.interact("Open");
+                            s.sleepUntil(() -> !largeDoor.hasAction("Open"), Calculations.random(1400, 1800));
+                        }
+
+                    }
+                    // Climb ladder if door is open
+                    if (!largeDoor.hasAction("Open")) {
+                        currentState = State.ASCEND_LADDER;
+                        s.log("currentState: " + currentState);
+                        break;
+                    }
                 }
                 break;
             case ASCEND_LADDER:
@@ -426,7 +440,7 @@ public class CooksAssistant {
                 break;
             case COMPLETE:
                 cooksAssistantCompleted = true;
-                s.log("Cook's Assistant successfully completed!");
+                break;
         }
         return 600;
     }
@@ -513,5 +527,12 @@ public class CooksAssistant {
 
     public boolean isCooksAssistantCompleted() {
         return cooksAssistantCompleted;
+    }
+
+    // Start running again if energy is atleast above 30
+    private void startRunning() {
+        if(!s.getWalking().isRunEnabled() && s.getWalking().getRunEnergy() > Calculations.random(30,50)){
+            s.getWalking().toggleRun();
+        }
     }
 }

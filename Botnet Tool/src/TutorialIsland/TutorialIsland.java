@@ -66,6 +66,9 @@ public class TutorialIsland {
             counter++;
         }
 
+        // Start running if energy is atleast above 30
+        startRunning();
+
         switch (currentState) {
             case DO_TUTORIAL:
                 // Get current state
@@ -1117,5 +1120,12 @@ public class TutorialIsland {
         s.sleep(Calculations.random(700, 950));
         s.getMouse().move(new Point(419,90));
         s.getMouse().click();
+    }
+
+    // Start running again if energy is atleast above 30
+    private void startRunning() {
+        if(!s.getWalking().isRunEnabled() && s.getWalking().getRunEnergy() > Calculations.random(30,50)){
+            s.getWalking().toggleRun();
+        }
     }
 }

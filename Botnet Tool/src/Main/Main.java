@@ -4,6 +4,7 @@ import Quests.CooksAssistant;
 import Quests.RomeoJuliet;
 import Quests.WitchsPotion;
 import Skills.MiningBot;
+import Skills.Combat;
 import TutorialIsland.TutorialIsland;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
@@ -27,6 +28,9 @@ public class Main extends AbstractScript {
     // MiningBot
     private MiningBot miningBot;
 
+    // Combat trainer
+    private Combat combat;
+
     // Tutorial Island
     private TutorialIsland tutorialIsland;
 
@@ -36,6 +40,7 @@ public class Main extends AbstractScript {
     // VARS
     // Skills
     public boolean minerIsRunning;
+    public boolean combatIsRunning;
 
     // Quests
     private boolean questerIsRunning;
@@ -53,11 +58,16 @@ public class Main extends AbstractScript {
         getClient().disableIdleCamera();
         getClient().disableIdleMouse();
 
+        // Quests initialize
         cooksAssistant = new CooksAssistant(this);
         witchsPotion = new WitchsPotion(this);
         romeoJuliet = new RomeoJuliet(this);
 
+        // Skills initialize
         miningBot = new MiningBot(this);
+        combat = new Combat(this);
+
+        // Tutorial island initialize
         tutorialIsland = new TutorialIsland(this);
 
         // Quests
@@ -67,6 +77,7 @@ public class Main extends AbstractScript {
 
         // Skills
         miningBot.onStart();
+        combat.onStart();
 
         // Tutorial island
         tutorialIsland.onStart();
@@ -96,6 +107,11 @@ public class Main extends AbstractScript {
             miningBot.onLoop();
         }
 
+        if (combatIsRunning) {
+            combat.onLoop();
+        }
+
+        // Run tutorial island
         if (isTutorialIsland) {
             tutorialIsland.onLoop();
         }
@@ -135,7 +151,7 @@ public class Main extends AbstractScript {
 
         // Script selection screen
         final JComboBox scriptComboBox = new JComboBox<>(new String[]{
-                "Mining", "Questing", "Tutorial Island"
+                "Combat","Mining", "Questing", "Tutorial Island"
         });
 
         // Select script label
@@ -168,6 +184,10 @@ public class Main extends AbstractScript {
             if (selectedScript == "Tutorial Island") {
                 isTutorialIsland = true;
                 log("isTutorialIsland: " + isTutorialIsland);
+            }
+            if (selectedScript == "Combat") {
+                combatIsRunning = true;
+                log("combatIsRunning: " + combatIsRunning);
             }
             selectionFrame.dispose();
         });
